@@ -18,7 +18,7 @@ Projeto desenvolvido como atividade prática da disciplina de SOFTWARE PARA PERS
 ## Estrutura do projeto
 
 ```
-src/main/java/com/kelvin/
+src/main/java/
 ├── Database.java            # Gerencia a conexão com o banco SQLite
 ├── Human.java               # Entidade mapeada para o banco e para XML/JSON
 ├── HumanList.java           # Wrapper necessário para serialização XML de listas
