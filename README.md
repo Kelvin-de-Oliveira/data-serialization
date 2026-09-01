@@ -1,6 +1,12 @@
-# ORM e Serialização de Objetos com Java
+# ORM, Serialização de Objetos e Interface Gráfica com Java
 
-Projeto desenvolvido como atividade prática da disciplina de SOFTWARE PARA PERSISTÊNCIA DE DADOS, ministrada pelo professor MARCELO AKIRA INUZUKA, no Instituto de Informática - UFG, no semestre 2026.2. Demonstra o uso de **ORMLite** para persistência de objetos em banco de dados SQLite e a **serialização e desserialização** de objetos nos formatos JSON e XML.
+Projeto desenvolvido como atividade prática da disciplina de **SOFTWARE PARA PERSISTÊNCIA DE DADOS**, ministrada pelo professor MARCELO AKIRA INUZUKA, no Instituto de Informática - UFG, no semestre 2026.2.
+
+O projeto foi construído em **três etapas evolutivas**:
+
+1. **ORM com ORMLite** - mapeamento de objetos Java para banco de dados SQLite com operações CRUD
+2. **Serialização de dados** - exportação e importação de objetos nos formatos JSON e XML, com classes utilitárias dedicadas
+3. **Interface gráfica JavaFX** - tela de cadastro com operações CRUD, busca por nome e seletor de datas no formato brasileiro
 
 ---
 
@@ -8,24 +14,36 @@ Projeto desenvolvido como atividade prática da disciplina de SOFTWARE PARA PERS
 
 - Java 17
 - Maven
-- [ORMLite](https://ormlite.com/) — mapeamento objeto-relacional
-- [SQLite](https://www.sqlite.org/) — banco de dados embutido
-- [Gson](https://github.com/google/gson) — serialização JSON
-- [JAXB](https://docs.oracle.com/javase/tutorial/jaxb/) — serialização XML
+- [ORMLite](https://ormlite.com/) - mapeamento objeto-relacional
+- [SQLite](https://www.sqlite.org/) - banco de dados embutido
+- [Gson](https://github.com/google/gson) - serialização JSON
+- [JAXB](https://docs.oracle.com/javase/tutorial/jaxb/) - serialização XML
+- [JavaFX 17](https://openjfx.io/) - interface gráfica
 
 ---
 
 ## Estrutura do projeto
 
 ```
-src/main/java/
-├── Database.java            # Gerencia a conexão com o banco SQLite
-├── Human.java               # Entidade mapeada para o banco e para XML/JSON
-├── HumanList.java           # Wrapper necessário para serialização XML de listas
-├── HumanJsonSerializer.java # Serialização e desserialização em JSON via Gson
-├── HumanXmlSerializer.java  # Serialização e desserialização em XML via JAXB
-├── HumanRepository.java     # Repositório com operações CRUD e importação/exportação
-└── Main.java                # Classe de testes
+src/
+├── main/
+│   ├── java/
+│   │   ├── model/
+│   │   │   ├── Database.java              # Gerencia a conexão com o banco SQLite
+│   │   │   ├── Human.java                 # Entidade mapeada para o banco, XML e JSON
+│   │   │   ├── HumanList.java             # Wrapper para serialização XML de listas
+│   │   │   ├── HumanJsonSerializer.java   # Serialização/desserialização JSON via Gson
+│   │   │   ├── HumanXmlSerializer.java    # Serialização/desserialização XML via JAXB
+│   │   │   └── HumanRepository.java       # Repositório CRUD e importação/exportação
+│   │   ├── view/
+│   │   │   ├── AppView.java               # Inicializa e exibe a janela JavaFX
+│   │   │   └── HumanFX.java               # Representação da entidade para a TableView
+│   │   ├── controller/
+│   │   │   └── AppController.java         # Controla interações da interface com o banco
+│   │   └── Main.java                      # Testes de serialização via console
+│   └── resources/
+│       └── view/
+│           └── app.fxml                   # Layout GUI
 ```
 
 ---
@@ -34,18 +52,30 @@ src/main/java/
 
 A entidade `Human` possui os seguintes atributos:
 
-| Atributo   | Tipo     | Descrição                        |
-|------------|----------|----------------------------------|
-| `id`       | `int`    | Identificador gerado pelo banco  |
-| `fullName` | `String` | Nome completo                    |
-| `income`   | `double` | Renda mensal                     |
-| `birthday` | `Date`   | Data de nascimento               |
+| Atributo   | Tipo     | Descrição                       |
+|------------|----------|---------------------------------|
+| `id`       | `int`    | Identificador gerado pelo banco |
+| `fullName` | `String` | Nome completo                   |
+| `income`   | `double` | Renda mensal                    |
+| `birthday` | `Date`   | Data de nascimento              |
 
 ---
 
 ## Funcionalidades
 
-### CRUD básico
+### Interface gráfica (JavaFX)
+
+| Ação | Descrição |
+|---|---|
+| Adicionar | Habilita os campos para inserção de novo registro |
+| Salvar | Persiste o registro no banco e exibe na tabela |
+| Atualizar | Edita o registro selecionado na tabela |
+| Deletar | Remove o registro selecionado |
+| Cancelar | Descarta a operação em andamento e limpa os campos |
+| Buscar | Filtra registros pelo nome (busca parcial) |
+| Limpar Busca | Restaura a listagem completa |
+
+### CRUD via repositório
 
 | Método | Descrição |
 |---|---|
@@ -54,13 +84,14 @@ A entidade `Human` possui os seguintes atributos:
 | `loadAll()` | Retorna todos os registros |
 | `update(Human)` | Atualiza um registro existente |
 | `delete(Human)` | Remove um registro do banco |
+| `searchByName(String)` | Busca registros com nome parcialmente correspondente |
 
 ### Exportação
 
 | Método | Descrição |
 |---|---|
-| `dumpData(String formato)` | Retorna todos os registros como string em JSON ou XML |
-| `dumpFile(String formato, File arquivo)` | Salva todos os registros em um arquivo JSON ou XML |
+| `dumpData(String formato)` | Retorna todos os registros como string JSON ou XML |
+| `dumpFile(String formato, File arquivo)` | Salva todos os registros em arquivo JSON ou XML |
 
 ### Importação
 
@@ -73,32 +104,58 @@ A entidade `Human` possui os seguintes atributos:
 
 ---
 
-## Como executar
-
-### Pré-requisitos
+## Pré-requisitos
 
 - Java 17+
 - Maven 3.6+
 - IntelliJ IDEA (recomendado)
 
-### Passos
+---
+
+## Como executar
+
+### Interface gráfica (JavaFX)
 
 1. Clone o repositório:
 ```bash
 git clone https://github.com/Kelvin-de-Oliveira/data-serialization.git
 ```
 
-2. Abra o projeto no IntelliJ IDEA via **File → Open** e selecione a pasta raiz do projeto.
+2. Acesse a pasta do projeto:
+```bash
+cd data-serialization
+```
 
-3. Aguarde o Maven baixar as dependências automaticamente. Um ícone de elefante aparecerá no canto superior direito do editor — clique em **Reload Maven Project** caso as dependências não sejam baixadas automaticamente.
-
-4. Execute a classe `Main.java`, pelo menu **Run → Run 'Main'**.
+3. Execute:
+```bash
+mvn javafx:run
+```
 
 ---
 
-### Arquivos gerados
+### Testes de serialização via console
 
-O repositório já inclui os arquivos abaixo, gerados durante os testes, para fins de verificação:
+Execute a classe `Main.java` pelo menu **Run → Run 'Main'**.
+
+A execução realiza os seguintes testes em sequência:
+
+| Teste | O que valida |
+|---|---|
+| `dumpData("json")` | Exporta todos os registros como JSON no console |
+| `dumpData("xml")` | Exporta todos os registros como XML no console |
+| `dumpFile("json", ...)` | Gera o arquivo `humans.json` na raiz do projeto |
+| `dumpFile("xml", ...)` | Gera o arquivo `humans.xml` na raiz do projeto |
+| `createFromJSON(...)` | Cria um registro a partir de uma string JSON |
+| `createFromXML(...)` | Cria um registro a partir de uma string XML |
+| `importData("json", ...)` | Importa múltiplos registros de uma string JSON |
+| `importFile("xml", ...)` | Importa registros do arquivo `humans.xml` gerado |
+| Verificação final | Lista todos os registros presentes no banco |
+
+---
+
+## Arquivos gerados
+
+O repositório inclui os arquivos abaixo, gerados durante os testes:
 
 | Arquivo | Descrição |
 |---|---|
@@ -108,19 +165,19 @@ O repositório já inclui os arquivos abaixo, gerados durante os testes, para fi
 
 ### Gerando os arquivos do zero
 
-Caso queira reproduzir a execução completa a partir de um estado limpo, apague os três arquivos antes de rodar o projeto.
+Caso queira reproduzir a execução a partir de um estado limpo, apague os três arquivos antes de rodar:
 
-No Linux/Mac:
+**Linux/Mac:**
 ```bash
 rm human.db humans.json humans.xml
 ```
 
-No Windows:
+**Windows:**
 ```bash
 del human.db humans.json humans.xml
 ```
 
-Na próxima execução, o banco de dados e os arquivos serão recriados automaticamente pela classe `Main.java`.
+Na próxima execução, o banco e os arquivos serão recriados automaticamente.
 
 ---
 
@@ -178,18 +235,35 @@ Na próxima execução, o banco de dados e os arquivos serão recriados automati
         <artifactId>jakarta.activation-api</artifactId>
         <version>1.2.2</version>
     </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-controls</artifactId>
+        <version>17.0.6</version>
+    </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-fxml</artifactId>
+        <version>17.0.6</version>
+    </dependency>
 </dependencies>
 ```
+
 ---
 
 ## Autor
+
 **Kelvin de Oliveira**
 [![GitHub](https://img.shields.io/badge/GitHub-kelvin--de--oliveira-181717?logo=github)](https://github.com/kelvin-de-oliveira)
+
 ---
+
 ## Referências
 
-- [Tutorial ORM — marceloakira](https://github.com/marceloakira/tutorials/tree/main/orm)
-- [Tutorial Serialização — marceloakira](https://github.com/marceloakira/tutorials/tree/main/serializacao_xml_json)
+- [Tutorial ORM - marceloakira](https://github.com/marceloakira/tutorials/tree/main/orm)
+- [Tutorial Serialização - marceloakira](https://github.com/marceloakira/tutorials/tree/main/serializacao_xml_json)
+- [Tutorial JavaFX CRUD - marceloakira](https://github.com/marceloakira/tutorials/tree/main/javafx-crud)
 - [Documentação ORMLite](https://ormlite.com/javadoc/ormlite-core/doc-files/ormlite.html)
 - [Documentação Gson](https://github.com/google/gson/blob/main/UserGuide.md)
-
+- [Documentação JAXB](https://docs.oracle.com/javase/tutorial/jaxb/)
+- [Documentação JavaFX](https://openjfx.io/openjfx-docs/)
+- [JavaFX com Maven - OpenJFX](https://openjfx.io/openjfx-docs/#IDE-Intellij)
