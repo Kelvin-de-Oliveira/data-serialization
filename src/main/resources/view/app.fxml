@@ -27,8 +27,8 @@
         <Label text="Renda:"            GridPane.rowIndex="2" GridPane.columnIndex="0"/>
         <TextField fx:id="incomeField"  GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-        <Label text="Nascimento (yyyy-MM-dd):" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <TextField fx:id="birthdayField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        <Label text="Data de Nascimento:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <DatePicker fx:id="birthdayPicker" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
     </GridPane>
 
     <HBox spacing="10">

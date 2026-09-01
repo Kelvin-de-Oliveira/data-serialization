@@ -8,9 +8,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Alert.AlertType;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.scene.control.DatePicker;
+import javafx.util.StringConverter;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import model.Database;
 import model.Human;
 import model.HumanRepository;
@@ -28,7 +33,7 @@ public class AppController implements Initializable {
     @FXML private TextField idField;
     @FXML private TextField fullNameField;
     @FXML private TextField incomeField;
-    @FXML private TextField birthdayField;
+    @FXML private DatePicker birthdayPicker;
 
     @FXML private Button addButton;
     @FXML private Button updateButton;
@@ -40,7 +45,7 @@ public class AppController implements Initializable {
     @FXML private Button searchButton;
     @FXML private Button clearSearchButton;
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateTimeFormatter BR_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final Database database = new Database("human.db");
     private static final HumanRepository repo = new HumanRepository(database);
     private AppView appView;
@@ -55,6 +60,20 @@ public class AppController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // configurar formato brasileiro no DatePicker
+        birthdayPicker.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date) {
+                return date != null ? BR_FORMAT.format(date) : "";
+            }
+            @Override
+            public LocalDate fromString(String text) {
+                return (text != null && !text.isEmpty())
+                        ? LocalDate.parse(text, BR_FORMAT)
+                        : null;
+            }
+        });
+
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         fullNameCol.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         incomeCol.setCellValueFactory(new PropertyValueFactory<>("income"));
@@ -73,14 +92,16 @@ public class AppController implements Initializable {
     }
 
     private HumanFX toFX(Human h) {
-        String birthday = h.getBirthday() != null ? sdf.format(h.getBirthday()) : "";
+        String birthday = h.getBirthday() != null
+                ? BR_FORMAT.format(toLocalDate(h.getBirthday()))
+                : "";
         return new HumanFX(h.getId(), h.getFullName(), h.getIncome(), birthday);
     }
 
     private void setFieldsDisabled(boolean disabled) {
         fullNameField.setDisable(disabled);
         incomeField.setDisable(disabled);
-        birthdayField.setDisable(disabled);
+        birthdayPicker.setDisable(disabled);
     }
 
     private void setButtons(boolean add, boolean update, boolean delete,
@@ -96,7 +117,15 @@ public class AppController implements Initializable {
         idField.clear();
         fullNameField.clear();
         incomeField.clear();
-        birthdayField.clear();
+        birthdayPicker.setValue(null);
+    }
+
+    private Date toDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    private LocalDate toLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     @FXML
@@ -121,7 +150,7 @@ public class AppController implements Initializable {
             Human h = new Human();
             h.setFullName(fullNameField.getText());
             h.setIncome(Double.parseDouble(incomeField.getText()));
-            h.setBirthday(sdf.parse(birthdayField.getText()));
+            h.setBirthday(toDate(birthdayPicker.getValue()));
             Human saved = repo.create(h);
             HumanFX fx = toFX(saved);
             tableView.getItems().add(fx);
@@ -141,11 +170,11 @@ public class AppController implements Initializable {
             Human h = repo.loadFromId(selected.getId());
             h.setFullName(fullNameField.getText());
             h.setIncome(Double.parseDouble(incomeField.getText()));
-            h.setBirthday(sdf.parse(birthdayField.getText()));
+            h.setBirthday(toDate(birthdayPicker.getValue()));
             repo.update(h);
             selected.setFullName(h.getFullName());
             selected.setIncome(h.getIncome());
-            selected.setBirthday(sdf.format(h.getBirthday()));
+            selected.setBirthday(BR_FORMAT.format(toLocalDate(h.getBirthday())));
             tableView.refresh();
             setFieldsDisabled(true);
             setButtons(false, true, true, true, true);
@@ -170,7 +199,11 @@ public class AppController implements Initializable {
         idField.setText(String.valueOf(selected.getId()));
         fullNameField.setText(selected.getFullName());
         incomeField.setText(String.valueOf(selected.getIncome()));
-        birthdayField.setText(selected.getBirthday());
+        if (selected.getBirthday() != null && !selected.getBirthday().isEmpty()) {
+            birthdayPicker.setValue(LocalDate.parse(selected.getBirthday(), BR_FORMAT));
+        } else {
+            birthdayPicker.setValue(null);
+        }
         setButtons(false, false, false, true, true);
     }
 
