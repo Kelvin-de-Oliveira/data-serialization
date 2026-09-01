@@ -21,7 +21,7 @@ public class AppView extends Application {
     public void start(Stage primaryStage) throws Exception {
         Pane pane = loader.load();
         Scene scene = new Scene(pane);
-        primaryStage.setTitle("Cadastro de Human");
+        primaryStage.setTitle("Laboratório de Deus");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

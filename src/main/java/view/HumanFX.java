@@ -15,6 +15,7 @@ public class HumanFX {
         this.fullName = new SimpleStringProperty(fullName);
         this.income = new SimpleDoubleProperty(income);
         this.birthday = new SimpleStringProperty(birthday);
+        this.birthday = new SimpleStringProperty(birthday);
     }
 
     public int getId() { return id.get(); }
