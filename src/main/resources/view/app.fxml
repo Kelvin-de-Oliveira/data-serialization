@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controller.AppController"
+      prefWidth="600" prefHeight="500"
+      style="-fx-padding: 20;">
+
+    <Label text="Cadastro de Human" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="10" vgap="10">
+        <Label text="Id:"               GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="idField"      GridPane.rowIndex="0" GridPane.columnIndex="1" disable="true"/>
+
+        <Label text="Nome Completo:"    GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="fullNameField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Renda:"            GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="incomeField"  GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Nascimento (yyyy-MM-dd):" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="birthdayField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="10">
+        <Button fx:id="addButton"    text="Adicionar"  onAction="#onAddButtonAction"/>
+        <Button fx:id="updateButton" text="Atualizar"  onAction="#onUpdateButtonAction" disable="true"/>
+        <Button fx:id="deleteButton" text="Deletar"    onAction="#onDeleteButtonAction" disable="true"/>
+        <Button fx:id="cancelButton" text="Cancelar"   onAction="#onCancelButtonAction" disable="true"/>
+        <Button fx:id="saveButton"   text="Salvar"     onAction="#onSaveButtonAction"   disable="true"/>
+    </HBox>
+
+    <TableView fx:id="tableView" prefHeight="300">
+        <columns>
+            <TableColumn fx:id="idCol"       text="Id"           prefWidth="50"/>
+            <TableColumn fx:id="fullNameCol" text="Nome Completo" prefWidth="200"/>
+            <TableColumn fx:id="incomeCol"   text="Renda"        prefWidth="100"/>
+            <TableColumn fx:id="birthdayCol" text="Nascimento"   prefWidth="150"/>
+        </columns>
+        <placeholder><Label text="Nenhum registro encontrado"/></placeholder>
+    </TableView>
+
+</VBox>
