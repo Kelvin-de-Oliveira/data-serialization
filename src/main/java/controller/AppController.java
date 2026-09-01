@@ -36,6 +36,10 @@ public class AppController implements Initializable {
     @FXML private Button cancelButton;
     @FXML private Button saveButton;
 
+    @FXML private TextField searchField;
+    @FXML private Button searchButton;
+    @FXML private Button clearSearchButton;
+
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     private static final Database database = new Database("human.db");
     private static final HumanRepository repo = new HumanRepository(database);
@@ -168,5 +172,27 @@ public class AppController implements Initializable {
         incomeField.setText(String.valueOf(selected.getIncome()));
         birthdayField.setText(selected.getBirthday());
         setButtons(false, false, false, true, true);
+    }
+
+    @FXML
+    public void onSearchButtonAction() {
+        String term = searchField.getText().trim();
+        if (term.isEmpty()) {
+            tableView.setItems(loadAll());
+            return;
+        }
+        ObservableList<HumanFX> results = FXCollections.observableArrayList();
+        for (Human h : repo.searchByName(term)) {
+            results.add(toFX(h));
+        }
+        tableView.setItems(results);
+        clearFields();
+        setButtons(false, true, true, true, true);
+    }
+
+    @FXML
+    public void onClearSearchButtonAction() {
+        searchField.clear();
+        tableView.setItems(loadAll());
     }
 }
