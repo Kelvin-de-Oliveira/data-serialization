@@ -169,6 +169,19 @@ public class HumanRepository
         }
     }
 
+    public List<Human> searchByName(String name) {
+        List<Human> results = new ArrayList<>();
+        try {
+            results = dao.queryBuilder()
+                    .where()
+                    .like("fullName", "%" + name + "%")
+                    .query();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return results;
+    }
+
 
 
 }
